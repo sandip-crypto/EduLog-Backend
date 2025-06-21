@@ -9,13 +9,19 @@ const learningRoutes = require('./routes/learningRoutes');
 const app = express();
 
 // Middleware
+const allowedOrigins = [
+  process.env.CLIENT_URL
+].filter(Boolean); // Remove undefined values
+
 app.use(cors({
-  origin: [
-    'http://localhost:5173', 
-    'http://localhost:3000',
-    'https://your-app-name.vercel.app', // Replace with your Vercel URL
-    /\.vercel\.app$/ // Allow all Vercel preview deployments
-  ],
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like Postman) or if in the list
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
 }));
 app.use(express.json({ limit: '10mb' }));
