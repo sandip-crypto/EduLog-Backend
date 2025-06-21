@@ -13,17 +13,12 @@ const allowedOrigins = [
   process.env.CLIENT_URL
 ].filter(Boolean); // Remove undefined values
 
+// Allow Vercel domain
 app.use(cors({
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like Postman) or if in the list
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true
+  origin: process.env.CLIENT_URL,
+  credentials: true,
 }));
+
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
